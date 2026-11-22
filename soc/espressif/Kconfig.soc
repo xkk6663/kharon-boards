@@ -1,0 +1,6 @@
+# kharon-boards/soc/espressif/Kconfig.soc
+#
+# 只把 S31 的 SoC 符号接进 SoC Kconfig 树。
+# 不重复定义 SOC_FAMILY_ESPRESSIF_ESP32 / SOC_FAMILY：
+# 那两个符号由主树 `zephyr/soc/espressif/Kconfig.soc` 提供。
+rsource "esp32s31/Kconfig.soc"

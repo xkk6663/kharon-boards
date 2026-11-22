@@ -1,0 +1,22 @@
+# kharon-boards/soc/espressif/soc.yml
+#
+# 外挂 SoC（方案 ③，2026-11-21）：只登记 ESP32-S31 这一个系列。
+#
+# 为什么只写 series、不写 family：
+#   主树 `zephyr/soc/espressif/soc.yml` 已经声明了 family `espressif_esp32`（11 个系列）。
+#   这里再声明同名 family 会在扫描结果里出现两个同名 family，
+#   `SOC_family_espressif_esp32_DIR` 会被后一个覆盖——对本目录的 SoC 无害，
+#   但会让"family 只含一个系列"的假象进入所有消费方，所以不重复声明。
+#
+#   CONFIG_SOC_FAMILY 不靠这里：`esp32s31/Kconfig.soc` 里
+#   `select SOC_FAMILY_ESPRESSIF_ESP32`，主树 `Kconfig.soc` 的
+#   `config SOC_FAMILY default "espressif_esp32"` 负责给值。
+#
+# cpuclusters 必须声明，否则 `korvo1/esp32s31/hpcore` 这类 qualifier 解析不到。
+series:
+- name: esp32s31
+  socs:
+  - name: esp32s31
+    cpuclusters:
+    - name: hpcore
+    - name: lpcore

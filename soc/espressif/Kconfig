@@ -1,0 +1,19 @@
+# kharon-boards/soc/espressif/Kconfig
+#
+# 只补 S31 自己的符号。这里刻意**不** `rsource "*/Kconfig"`、
+# 也不 `rsource "common/Kconfig"`：
+#   主树 `zephyr/soc/espressif/Kconfig` 的 `rsource "*/Kconfig"` 已经 glob 了
+#   它自己的子目录（含 `common/Kconfig`）；同一批 config 被 source 两次会报重定义。
+#
+# MAC 菜单里只 source S31 的 Kconfig.mac：通用符号
+# （ESP_MAC_ADDR_UNIVERSE_* / ESP_MAC_UNIVERSAL_MAC_ADDRESSES_*）由主树定义，
+# 这里只提供 S31 的选择项与默认值。
+if SOC_FAMILY_ESPRESSIF_ESP32
+
+rsource "esp32s31/Kconfig"
+
+menu "MAC Config"
+rsource "esp32s31/Kconfig.mac"
+endmenu
+
+endif # SOC_FAMILY_ESPRESSIF_ESP32

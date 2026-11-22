@@ -1,0 +1,97 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * 板级资源（按我们手上的板子）：
+ *   - 用户按键 KEY : GPIO45（gpio1 pin13），实测空闲低、按下高 → GPIO_PULL_DOWN
+ *   - 板载 RGB    : WS2812 一颗，数据脚 GPIO48，走 RMT
+ *   - 控制台       : 原生 USB-Serial-JTAG（usb_serial）；UART0 保留但不作 console
+ */
+
+/dts-v1/;
+
+#include <espressif/esp32s3/esp32s3.dtsi>
+#include <espressif/partitions_0x0_amp.dtsi>
+#include <zephyr/dt-bindings/led/led.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include "esp32s3_korvo-pinctrl.dtsi"
+
+/ {
+	compatible = "espressif,esp32s3";
+	model = "ESP32-S3 Korvo Custom Board";
+
+	aliases {
+		sw0 = &button0;
+		led-strip = &rgb_led;
+		watchdog0 = &wdt0;
+	};
+
+	chosen {
+		zephyr,sram = &sram1;
+		zephyr,console = &usb_serial;
+		zephyr,shell-uart = &usb_serial;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+		zephyr,led-strip = &rgb_led;
+	};
+
+	/* 板载 WS2812 一颗：RMT 通道 0，物理顺序 GRB */
+	rgb_led: ws2812 {
+		compatible = "worldsemi,ws2812-pulse-io";
+		pulse-ios = <&rmt 0>;
+		chain-length = <1>;
+		color-mapping = <LED_COLOR_ID_GREEN
+				 LED_COLOR_ID_RED
+				 LED_COLOR_ID_BLUE>;
+		reset-delay = <300>;
+	};
+
+	/* 用户按键 KEY：IO45 = gpio1 pin13，实测空闲低、按下高 */
+	buttons {
+		compatible = "gpio-keys";
+		debounce-interval-ms = <20>;
+
+		button0: button_0 {
+			gpios = <&gpio1 13 GPIO_PULL_DOWN>;
+			label = "KEY";
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+};
+
+&flash0 {
+	reg = <0x0 DT_SIZE_M(8)>;
+	ranges = <0x0 0x0 DT_SIZE_M(8)>;
+};
+
+&uart0 {
+	current-speed = <115200>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+&rmt {
+	pinctrl-0 = <&rmt_default>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+&usb_serial {
+	status = "okay";
+};
+
+/*
+ * 板载硬件能力：S3 的硬件熵源 / 看门狗 / 片上温度。
+ * 这是 Board 事实，APP 只按需使用（sys rand / watchdog / temp）。
+ */
+&trng0 {
+	status = "okay";
+};
+
+&wdt0 {
+	status = "okay";
+};
+
+&coretemp {
+	status = "okay";
+};

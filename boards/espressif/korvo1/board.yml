@@ -1,0 +1,7 @@
+# kharon-boards/boards/espressif/korvo1/board.yml
+board:
+  name: korvo1
+  full_name: ESP32-S31-Korvo-1
+  vendor: espressif
+  socs:
+  - name: esp32s31

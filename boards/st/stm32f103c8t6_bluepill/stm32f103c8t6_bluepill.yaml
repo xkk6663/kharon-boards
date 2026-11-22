@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# Blue Pill（STM32F103C8T6）：64 KB flash / 20 KB SRAM。
+# 板级容量与 console 是板子事实，不再由 APP overlay 打补丁。
+
+identifier: stm32f103c8t6_bluepill
+name: Blue Pill STM32F103C8T6
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+ram: 20
+flash: 64
+supported:
+  - gpio
+  - uart
+  - i2c
+  - spi
+  - pwm
+  - watchdog
+  - adc
+  - usbd
+vendor: st

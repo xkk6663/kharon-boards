@@ -1,0 +1,16 @@
+# kharon-boards/soc/espressif/Kconfig.defconfig
+#
+# 存在的理由（2026-11-21 方案 ③ 第 2 关实测）：
+#   Zephyr 的 kconfig_gen 对每个 SoC 根目录只 `osource "<dir>/Kconfig.defconfig"`，
+#   而我们的 SoC 目录是 `<module>/soc/espressif`（不是 `.../soc/espressif/esp32s31`）。
+#   若这里不放文件，`esp32s31/Kconfig.defconfig` 就没人 source，
+#   于是 `CONFIG_NUM_IRQS` 等默认值全都不生成 —— isr_tables.c 会报
+#   `'CONFIG_NUM_IRQS' undeclared`（IRQ_TABLE_SIZE 展开失败）。
+#
+# 与主树的关系：主树 `zephyr/soc/espressif/Kconfig.defconfig` 同样只 glob 它自己的
+#   `*/Kconfig.defconfig`（esp32 / esp32s3 …），两边各管各的子目录，不会重复定义。
+if SOC_FAMILY_ESPRESSIF_ESP32
+
+rsource "esp32s31/Kconfig.defconfig"
+
+endif # SOC_FAMILY_ESPRESSIF_ESP32

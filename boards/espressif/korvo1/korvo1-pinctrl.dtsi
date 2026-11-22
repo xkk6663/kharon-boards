@@ -1,0 +1,52 @@
+/*
+ * kharon-boards/boards/espressif/korvo1/korvo1-pinctrl.dtsi
+ *
+ * Korvo-1 与上游 ESP32-S31-Function-CoreBoard-1 的物理接线差异：
+ *   UART0 仍走板载 USB-UART 桥（GPIO58/59）
+ *   I2C0  SDA=GPIO0 / SCL=GPIO1（ES8389，板上有外部上拉）
+ *   WS2812 数据 = GPIO37（RMT OUT0）
+ *   TWAI0 TX=GPIO14 / RX=GPIO13
+ */
+
+#include <zephyr/dt-bindings/pinctrl/esp32s31-pinctrl.h>
+
+&pinctrl {
+	uart0_default: uart0_default {
+		group1 {
+			pinmux = <UART0_TX_GPIO58>;
+			output-high;
+		};
+
+		group2 {
+			pinmux = <UART0_RX_GPIO59>;
+			bias-pull-up;
+		};
+	};
+
+	i2c0_default: i2c0_default {
+		group1 {
+			pinmux = <I2C0_SDA_GPIO0>, <I2C0_SCL_GPIO1>;
+			bias-pull-up;
+			drive-open-drain;
+			output-high;
+		};
+	};
+
+	twai0_default: twai0_default {
+		group1 {
+			pinmux = <TWAI0_TX_GPIO14>;
+			output-high;
+		};
+
+		group2 {
+			pinmux = <TWAI0_RX_GPIO13>;
+			bias-pull-up;
+		};
+	};
+
+	rmt_default: rmt_default {
+		group1 {
+			pinmux = <RMT_OUT0_GPIO37>;
+		};
+	};
+};
